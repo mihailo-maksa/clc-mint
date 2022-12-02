@@ -28,3 +28,19 @@
 .lightPurple {
   color: #e011a7;
 }
+
+@media screen and (max-width: 500px) {
+  .account {
+    font-size: 0.6em !important;
+  }
+}
+
+.mint-button:hover {
+  background-color: "#9333ea !important";
+  opacity: 0.7 !important;
+}
+
+.wallet-adapter-button,
+.wallet-adapter-button-trigger {
+  text-transform: uppercase !important;
+}
