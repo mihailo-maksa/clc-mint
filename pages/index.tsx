@@ -12,11 +12,7 @@ import {
   LAMPORTS_PER_SOL,
 } from "@solana/web3.js";
 import Head from "next/head";
-// import metadata from "../public/metadata.json";
-
-// deploy mint website to mint.lions.cool (vercel or netlify)
-// mainnet deployment (add mainnet NFT address + other config + mint 7 1 of 1 NFTs)
-// add metadata (array of 4444 objects)
+import metadata from "../public/metadata.json";
 
 require("@solana/wallet-adapter-react-ui/styles.css");
 
@@ -29,13 +25,16 @@ const WalletMultiButtonDynamic = dynamic(
 const MAX_SUPPLY = 4444;
 const MINT_PRICE = 0.6;
 const WL_MINT_PRICE = 0.4;
-const COLLECTION_ADDRESS_MAINNET_BETA = "";
+
+const COLLECTION_ADDRESS_MAINNET_BETA =
+  "HpyogwbKiZegKEsAVQpXvRf53b3W8x73fHiA53aTZ2fj";
 const SOLANA_MAINNET_BETA_RPC =
   "https://solana-mainnet.g.alchemy.com/v2/sj9UVAYpI2zKHuFrp_2AfMrJKZFD3Fp8";
-const COLLECTION_ADDRESS_DEVNET =
-  "7Yjk7dNp8QE89kvTtmxAxd9Mn8HoLV7GjnD45QYD6qL5";
-const SOLANA_DEVNET_RPC =
-  "https://solana-devnet.g.alchemy.com/v2/LGsgs8DppQcOrTJ5AVR_-0U3QEikpQnF";
+
+// const COLLECTION_ADDRESS_DEVNET =
+//   "7Yjk7dNp8QE89kvTtmxAxd9Mn8HoLV7GjnD45QYD6qL5";
+// const SOLANA_DEVNET_RPC =
+//   "https://solana-devnet.g.alchemy.com/v2/LGsgs8DppQcOrTJ5AVR_-0U3QEikpQnF";
 
 const whitelistAddresses = [
   "HuxE723AdxKUuxXNfY7PgyK648pR32mU3jPn7Q9ZquJc",
@@ -48,26 +47,6 @@ const whitelistAddresses = [
   "HQfYSEtJnZe3trBZEfzift7tFFh2GdMbcW58maqBoigD",
 ];
 
-const metadata = {
-  name: "Cool Lions Club",
-  description:
-    "WELCOME TO THE CLUB! The COOL Lions Club is more than just an NFT collection. It's a community that is focused on bringing positive changes to the (growing) Solana NFT space. Above all that, our main goal is to benefit the COOL Lions Club holders as much as we can.",
-  image:
-    "https://storageapi.fleek.co/c1b47887-4944-4a44-b339-0d83287c9e83-bucket/0.jpg",
-  attributes: [
-    { trait_type: "Background", value: "Blue" },
-    { trait_type: "Eyes", value: "Green" },
-    { trait_type: "Mouth", value: "Smile" },
-    { trait_type: "Nose", value: "Small" },
-    { trait_type: "Head", value: "Small" },
-    { trait_type: "Body", value: "Small" },
-    { trait_type: "Tail", value: "Small" },
-    { trait_type: "Legs", value: "Small" },
-  ],
-  backround_color: "#34CAC6",
-  external_url: "https://lions.cool",
-};
-
 const Home: NextPage = () => {
   const [isWhitelisted, setIsWhitelisted] = useState<boolean>(false);
   const [account, setAccount] = useState<string>("");
@@ -77,7 +56,7 @@ const Home: NextPage = () => {
   const sdk = useSDK();
 
   const { data: myNftCollectionProgram } = useProgram(
-    COLLECTION_ADDRESS_DEVNET,
+    COLLECTION_ADDRESS_MAINNET_BETA,
     "nft-collection"
   );
 
@@ -85,7 +64,9 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const main = async () => {
+      // @ts-ignore
       if (window.solana.isPhantom) {
+        // @ts-ignore
         const res = await window.solana.connect();
         const currentAddress = res.publicKey.toString();
         setAccount(currentAddress);
@@ -101,7 +82,7 @@ const Home: NextPage = () => {
     main();
   }, [sdk?.wallet, myNftCollectionProgram, connected]);
 
-  const network = SOLANA_DEVNET_RPC;
+  const network = SOLANA_MAINNET_BETA_RPC;
   const connection = new Connection(network, "confirmed");
 
   const sendSOL = async (amount: number) => {
@@ -120,6 +101,7 @@ const Home: NextPage = () => {
       const { blockhash } = await connection.getRecentBlockhash();
       tx.recentBlockhash = blockhash;
 
+      // @ts-ignore
       const { signature } = await window.solana.signAndSendTransaction(tx);
 
       await connection.confirmTransaction(signature, "confirmed");
@@ -129,6 +111,10 @@ const Home: NextPage = () => {
   };
 
   const sendAmount = isWhitelisted ? WL_MINT_PRICE : MINT_PRICE;
+
+  const getRandomNumber = () => {
+    return Math.floor(Math.random() * 4444);
+  };
 
   return (
     <>
@@ -217,7 +203,8 @@ const Home: NextPage = () => {
               mintFeePaid
                 ? () =>
                     mintNFT({
-                      metadata: metadata,
+                      // @ts-ignore
+                      metadata: metadata[getRandomNumber()],
                       to: account,
                     })
                 : async () => {
