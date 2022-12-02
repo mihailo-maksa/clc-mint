@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useProgram, useMintNFT, useSDK } from "@thirdweb-dev/react/solana";
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import {
   Connection,
@@ -119,23 +118,23 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Cool Lions Club | Mint Your Cool Lion NOW!</title>
+        <title>COOL Lions Club | Mint Your COOL Lion NOW!</title>
         <meta
           name="description"
-          content="Cool Lions Club NFT Collection on Solana - Mint Your Cool Lion NOW!"
+          content="COOL Lions Club | Mint Your COOL Lion NOW!"
         />
       </Head>
       <div className={styles.container}>
         <div className={styles.iconContainer}>
-          <Image
-            src="/logo512.png"
+          <img
+            src="https://storageapi.fleek.co/c1b47887-4944-4a44-b339-0d83287c9e83-bucket/logo512.png"
             height={206}
             width={206}
             style={{
               objectFit: "contain",
               borderRadius: "50%",
             }}
-            alt="Cool Lions Club"
+            alt="COOL Lions Club"
           />
         </div>
         <h1
@@ -210,7 +209,7 @@ const Home: NextPage = () => {
                 : async () => {
                     await sendSOL(sendAmount);
                     alert(
-                      "Mint fee paid successfully! You can now mint your COOL Lion NFT!"
+                      "Mint fee paid successfully! You can now mint your COOL Lions Club NFT!"
                     );
                     setMintFeePaid(true);
                   }
