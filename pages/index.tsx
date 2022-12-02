@@ -209,7 +209,9 @@ const Home: NextPage = () => {
                     })
                 : async () => {
                     await sendSOL(sendAmount);
-                    alert("Mint fee paid! You can now mint your NFT.");
+                    alert(
+                      "Mint fee paid successfully! You can now mint your COOL Lion NFT!"
+                    );
                     setMintFeePaid(true);
                   }
             }
