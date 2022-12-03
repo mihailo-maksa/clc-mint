@@ -26,7 +26,7 @@ const MINT_PRICE = 0.6;
 const WL_MINT_PRICE = 0.4;
 
 const COLLECTION_ADDRESS_MAINNET_BETA =
-  "HpyogwbKiZegKEsAVQpXvRf53b3W8x73fHiA53aTZ2fj";
+  "6WFci8tpJBdA28w4pEHcG8VafGkrK1HAJJXtG5UNJhE7";
 const SOLANA_MAINNET_BETA_RPC =
   "https://solana-mainnet.g.alchemy.com/v2/sj9UVAYpI2zKHuFrp_2AfMrJKZFD3Fp8";
 
@@ -44,6 +44,7 @@ const whitelistAddresses = [
   "Bm4ucVABhF8xn7B47UpYiaP2TiZNkqdxcw7Bcy5RTRgy",
   "BdH4LfRwASynjM927p5b6VhDUH5YY6gkbvtApAurB888",
   "HQfYSEtJnZe3trBZEfzift7tFFh2GdMbcW58maqBoigD",
+  "DmqAhAqK4xra72qxWBZSvK7Weq3xsMMj9gjQBooyYZv1",
 ];
 
 const Home: NextPage = () => {
@@ -55,7 +56,8 @@ const Home: NextPage = () => {
   const sdk = useSDK();
 
   const { data: myNftCollectionProgram } = useProgram(
-    COLLECTION_ADDRESS_MAINNET_BETA,
+    // @ts-ignore
+    new PublicKey("6WFci8tpJBdA28w4pEHcG8VafGkrK1HAJJXtG5UNJhE7"),
     "nft-collection"
   );
 
@@ -112,7 +114,7 @@ const Home: NextPage = () => {
   const sendAmount = isWhitelisted ? WL_MINT_PRICE : MINT_PRICE;
 
   const getRandomNumber = () => {
-    return Math.floor(Math.random() * 4444);
+    return Math.floor(Math.random() * 1024);
   };
 
   return (
@@ -188,35 +190,41 @@ const Home: NextPage = () => {
           </p>
           {isWhitelisted && <p>Whitelist Mint Price: {WL_MINT_PRICE} SOL</p>}
 
-          <button
-            style={{
-              color: "white",
-              fontWeight: "bold",
-              fontSize: "24px",
-              cursor: "pointer",
-              margin: "auto",
-              textTransform: "uppercase",
-            }}
-            className="mint-button wallet-adapter-button wallet-adapter-button-trigger"
-            onClick={
-              mintFeePaid
-                ? () =>
-                    mintNFT({
-                      // @ts-ignore
-                      metadata: metadata[getRandomNumber()],
-                      to: account,
-                    })
-                : async () => {
-                    await sendSOL(sendAmount);
-                    alert(
-                      "Mint fee paid successfully! You can now mint your COOL Lions Club NFT!"
-                    );
-                    setMintFeePaid(true);
-                  }
-            }
-          >
-            {mintFeePaid ? "Mint" : "Pay Mint Fee"}
-          </button>
+          {sdk?.wallet.isConnected() ? (
+            <button
+              style={{
+                color: "white",
+                fontWeight: "bold",
+                fontSize: "24px",
+                cursor: "pointer",
+                margin: "auto",
+                textTransform: "uppercase",
+              }}
+              className="mint-button wallet-adapter-button wallet-adapter-button-trigger"
+              onClick={
+                mintFeePaid
+                  ? () =>
+                      mintNFT({
+                        // @ts-ignore
+                        metadata: metadata[getRandomNumber()],
+                        to: sdk?.wallet.getAddress(),
+                      })
+                  : async () => {
+                      await sendSOL(sendAmount);
+
+                      alert(
+                        "Mint fee paid successfully! You can now mint your COOL Lions Club NFT!"
+                      );
+
+                      setMintFeePaid(true);
+                    }
+              }
+            >
+              {mintFeePaid ? "Mint" : "Pay Mint Fee"}
+            </button>
+          ) : (
+            <p>Not Connected. Please Refresh the Page and Try Again.</p>
+          )}
         </div>
       </div>
     </>
